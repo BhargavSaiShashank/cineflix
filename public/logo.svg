@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="120" height="40" viewBox="0 0 120 40" fill="none">
+  <path d="M10 8L20 32H0L10 8Z" fill="#EC4899"/>
+  <path d="M30 8L40 32H20L30 8Z" fill="#EC4899" fill-opacity="0.8"/>
+  <path d="M50 8L60 32H40L50 8Z" fill="#EC4899" fill-opacity="0.6"/>
+  <text x="65" y="25" font-family="Arial" font-size="16" font-weight="bold" fill="#FFFFFF">CINEFLIX</text>
+</svg> 
