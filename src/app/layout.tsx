@@ -5,6 +5,8 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { AuthProvider } from "@/contexts/AuthContext";
 import WatchProgressProvider from "@/contexts/WatchProgressContext";
 import { LanguageProvider } from "@/contexts/LanguageContext";
+import { WatchlistProvider } from "@/contexts/WatchlistContext";
+import { Toaster } from "@/components/ui/toaster";
 import Navbar from "@/components/layout/Navbar";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -31,10 +33,13 @@ export default function RootLayout({
           <AuthProvider>
             <LanguageProvider>
               <WatchProgressProvider>
-                <div className="min-h-screen bg-background">
-                  <Navbar />
-                  <main className="pt-16">{children}</main>
-                </div>
+                <WatchlistProvider>
+                  <div className="min-h-screen bg-background">
+                    <Navbar />
+                    <main className="pt-16">{children}</main>
+                  </div>
+                  <Toaster />
+                </WatchlistProvider>
               </WatchProgressProvider>
             </LanguageProvider>
           </AuthProvider>

@@ -22,6 +22,7 @@ import {
 import ActivityFeed from '@/components/activity/ActivityFeed';
 import { mockMovies } from '@/services/mockData';
 import SimilarContentRecommendations from '@/components/SimilarContentRecommendations';
+import PersonalizedRecommendations from '@/components/recommendations/PersonalizedRecommendations';
 
 interface Movie {
   id: number;
@@ -43,11 +44,8 @@ interface MoodRecommendation {
 }
 
 export default function RootPage() {
-  const { isAuthenticated, isLoading, user } = useAuth();
+  const { isAuthenticated, isLoading } = useAuth();
   const router = useRouter();
-  
-  // Add explicit type annotation for user in a comment to satisfy the linter
-  // The user variable is of type User | null
   
   const [featuredMovie, setFeaturedMovie] = useState<Movie | null>(null);
   const [trendingMovies, setTrendingMovies] = useState<Movie[]>([]);
@@ -354,6 +352,9 @@ export default function RootPage() {
           ))}
         </div>
       </div>
+      
+      {/* Personalized Recommendations */}
+      <PersonalizedRecommendations />
       
       {/* Similar Content Recommendations */}
       <SimilarContentRecommendations 

@@ -40,6 +40,11 @@ const Navbar = () => {
       icon: Film,
     },
     {
+      label: t('common', 'watchlist'),
+      href: '/watchlist',
+      icon: Heart,
+    },
+    {
       label: t('common', 'calendar'),
       href: '/calendar',
       icon: Calendar,
@@ -53,11 +58,6 @@ const Navbar = () => {
       label: t('common', 'aiFeatures'),
       href: '/ai-features',
       icon: Sparkles,
-    },
-    {
-      label: t('common', 'watchlist'),
-      href: '/watchlist',
-      icon: Heart,
     },
     {
       label: t('common', 'profile'),
