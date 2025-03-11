@@ -22,7 +22,7 @@ interface Movie {
 }
 
 export default function PersonalizedRecommendations() {
-  const { getWatchProgressList } = useWatchProgress();
+  const { getContinueWatchingList } = useWatchProgress();
   const { addToWatchlist, isInWatchlist } = useWatchlist();
   const { toast } = useToast();
   const [recommendations, setRecommendations] = useState<Movie[]>([]);
@@ -30,7 +30,7 @@ export default function PersonalizedRecommendations() {
 
   useEffect(() => {
     // Get the user's watch history
-    const watchedMovies = getWatchProgressList();
+    const watchedMovies = getContinueWatchingList();
     
     if (watchedMovies.length === 0) {
       // If no watch history, show trending movies
@@ -79,7 +79,7 @@ export default function PersonalizedRecommendations() {
     
     setRecommendations(topRecommendations);
     setLoading(false);
-  }, [getWatchProgressList]);
+  }, [getContinueWatchingList]);
 
   const handleAddToWatchlist = (movie: Movie) => {
     addToWatchlist({
