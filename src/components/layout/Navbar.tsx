@@ -3,13 +3,16 @@
 import React, { useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Home, Search, Compass, User, Film, Sparkles, Heart, Users } from 'lucide-react';
+import { Home, Search, Compass, User, Film, Sparkles, Heart, Users, Calendar, Settings } from 'lucide-react';
 
 import { cn } from '@/utils/cn';
 import { Button } from '@/components/ui/button';
+import { useLanguage } from '@/contexts/LanguageContext';
+import LanguageSelector from '@/components/settings/LanguageSelector';
 
 const Navbar = () => {
   const pathname = usePathname();
+  const { t } = useLanguage();
   
   useEffect(() => {
     console.log('Current pathname:', pathname);
@@ -17,44 +20,54 @@ const Navbar = () => {
 
   const navItems = [
     {
-      label: 'Home',
+      label: t('common', 'home'),
       href: '/',
       icon: Home,
     },
     {
-      label: 'Discover',
+      label: t('common', 'discover'),
       href: '/discover',
       icon: Search,
     },
     {
-      label: 'Movies',
+      label: t('common', 'movies'),
       href: '/movies',
       icon: Film,
     },
     {
-      label: 'Collections',
+      label: t('common', 'collections'),
       href: '/collections',
       icon: Film,
     },
     {
-      label: 'Friends',
+      label: t('common', 'calendar'),
+      href: '/calendar',
+      icon: Calendar,
+    },
+    {
+      label: t('common', 'friends'),
       href: '/friends',
       icon: Users,
     },
     {
-      label: 'AI Features',
+      label: t('common', 'aiFeatures'),
       href: '/ai-features',
       icon: Sparkles,
     },
     {
-      label: 'Watchlist',
+      label: t('common', 'watchlist'),
       href: '/watchlist',
       icon: Heart,
     },
     {
-      label: 'Profile',
+      label: t('common', 'profile'),
       href: '/profile',
       icon: User,
+    },
+    {
+      label: t('common', 'settings'),
+      href: '/settings',
+      icon: Settings,
     },
   ];
 
@@ -84,6 +97,11 @@ const Navbar = () => {
               </Link>
             );
           })}
+          
+          {/* Language Selector */}
+          <div className="hidden md:block ml-4">
+            <LanguageSelector variant="minimal" />
+          </div>
         </nav>
       </div>
     </div>

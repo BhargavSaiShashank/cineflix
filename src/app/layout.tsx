@@ -1,14 +1,17 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
+import { ThemeProvider } from "@/components/theme-provider";
 import { AuthProvider } from "@/contexts/AuthContext";
-import { ThemeProvider } from "next-themes";
+import WatchProgressProvider from "@/contexts/WatchProgressContext";
+import { LanguageProvider } from "@/contexts/LanguageContext";
+import Navbar from "@/components/layout/Navbar";
 
-const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
+const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "CineFlix - Your Personal Movie Companion",
-  description: "Discover, track, and share your favorite movies with CineFlix",
+  title: "CineFlix - Your Ultimate Movie Experience",
+  description: "Discover, track, and enjoy your favorite movies with CineFlix",
 };
 
 export default function RootLayout({
@@ -17,11 +20,23 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="dark" suppressHydrationWarning>
-      <body className={`${inter.className} bg-[#0f172a] text-white min-h-screen`}>
-        <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
+    <html lang="en">
+      <body className={inter.className}>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="dark"
+          enableSystem
+          disableTransitionOnChange
+        >
           <AuthProvider>
-            {children}
+            <LanguageProvider>
+              <WatchProgressProvider>
+                <div className="min-h-screen bg-background">
+                  <Navbar />
+                  <main className="pt-16">{children}</main>
+                </div>
+              </WatchProgressProvider>
+            </LanguageProvider>
           </AuthProvider>
         </ThemeProvider>
       </body>
