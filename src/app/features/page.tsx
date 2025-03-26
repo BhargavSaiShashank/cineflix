@@ -81,7 +81,7 @@ export default function FeaturesPage() {
             <h2 className="text-2xl font-bold">Coming Soon</h2>
           </div>
           <p className="text-white/80 mb-6">
-            We're constantly working on new features to enhance your movie experience. 
+            We&apos;re constantly working on new features to enhance your movie experience. 
             Stay tuned for upcoming features like advanced filtering, movie quizzes, and more!
           </p>
           <Link href="/">

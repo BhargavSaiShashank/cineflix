@@ -1,0 +1,64 @@
+<svg width="200" height="60" viewBox="0 0 200 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Film Reel Icon -->
+  <g>
+    <!-- Outer ring with gradient -->
+    <circle cx="30" cy="30" r="24" fill="url(#paint0_radial)" />
+    
+    <!-- Inner dark circle -->
+    <circle cx="30" cy="30" r="21" fill="#0a0a0a" />
+    
+    <!-- Film perforations -->
+    <circle cx="30" cy="12" r="3" fill="#e50914" />
+    <circle cx="30" cy="48" r="3" fill="#e50914" />
+    <circle cx="12" cy="30" r="3" fill="#e50914" />
+    <circle cx="48" cy="30" r="3" fill="#e50914" />
+    <circle cx="17" cy="17" r="2.5" fill="#e50914" />
+    <circle cx="43" cy="17" r="2.5" fill="#e50914" />
+    <circle cx="17" cy="43" r="2.5" fill="#e50914" />
+    <circle cx="43" cy="43" r="2.5" fill="#e50914" />
+    
+    <!-- Center hole -->
+    <circle cx="30" cy="30" r="7" fill="url(#paint1_linear)" />
+    
+    <!-- Film strip effect -->
+    <rect x="20" y="28" width="20" height="4" rx="2" fill="white" fill-opacity="0.15" transform="rotate(45 30 30)" />
+  </g>
+  
+  <!-- Text Logo -->
+  <g>
+    <!-- CineFlix Text -->
+    <text x="65" y="38" font-family="Arial Black, Arial, sans-serif" font-weight="900" font-size="28" fill="url(#text_gradient)" letter-spacing="-0.5">CineFlix</text>
+    
+    <!-- Star -->
+    <text x="125" y="24" font-family="Arial, sans-serif" font-size="12" fill="#e50914">★</text>
+    
+    <!-- Tagline -->
+    <text x="65" y="48" font-family="Arial, sans-serif" font-size="8" letter-spacing="2" fill="#a1a1aa" text-transform="uppercase">Premium Streaming</text>
+  </g>
+  
+  <!-- Glow Effect -->
+  <circle cx="30" cy="30" r="26" fill="url(#paint0_radial)" opacity="0.2" filter="url(#blur_filter)" />
+  
+  <defs>
+    <!-- Gradients -->
+    <radialGradient id="paint0_radial" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(30 30) rotate(90) scale(24)">
+      <stop stop-color="#e50914" />
+      <stop offset="0.5" stop-color="#ff5722" />
+      <stop offset="1" stop-color="#1ed5a9" />
+    </radialGradient>
+    <linearGradient id="paint1_linear" x1="23" y1="30" x2="37" y2="30" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#e50914" />
+      <stop offset="1" stop-color="#ff5722" />
+    </linearGradient>
+    <linearGradient id="text_gradient" x1="65" y1="30" x2="180" y2="30" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#e50914" />
+      <stop offset="0.5" stop-color="#ff5722" />
+      <stop offset="1" stop-color="#1ed5a9" />
+    </linearGradient>
+    
+    <!-- Filters -->
+    <filter id="blur_filter" x="0" y="0" width="60" height="60" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feGaussianBlur stdDeviation="2" />
+    </filter>
+  </defs>
+</svg> 

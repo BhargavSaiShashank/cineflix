@@ -11,7 +11,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { 
   Film, 
   Star, 
-  Clock, 
   Heart, 
   Award, 
   Calendar, 
@@ -508,7 +507,7 @@ export default function ProfilePage() {
                         </div>
                         <div>
                           <p className="text-white">7-day streak</p>
-                          <p className="text-sm text-gray-400">You've watched movies for 7 days in a row!</p>
+                          <p className="text-sm text-gray-400">You&apos;ve watched movies for 7 days in a row!</p>
                         </div>
                       </div>
                     </div>

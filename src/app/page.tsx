@@ -54,13 +54,6 @@ export default function RootPage() {
   const [customPrompt, setCustomPrompt] = useState<string>('');
 
   useEffect(() => {
-    // Clear any existing authentication state
-    if (typeof window !== 'undefined') {
-      localStorage.removeItem("user");
-      document.cookie = "auth-token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-      document.cookie = "profile-completed=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-    }
-    
     // Set a random featured movie for all users
     if (mockMovies && mockMovies.length > 0) {
       const randomIndex = Math.floor(Math.random() * Math.min(5, mockMovies.length));
@@ -68,16 +61,27 @@ export default function RootPage() {
       
       if (selectedMovie) {
         setFeaturedMovie(selectedMovie);
-        
-        // Set trending movies (excluding featured movie)
-        const trending = mockMovies
-          .filter(movie => movie.id !== selectedMovie.id)
-          .sort(() => 0.5 - Math.random())
-          .slice(0, 10);
-        setTrendingMovies(trending);
       }
     }
   }, []);
+
+  useEffect(() => {
+    // Clear any existing authentication state
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem("user");
+      document.cookie = "auth-token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+      document.cookie = "profile-completed=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+    }
+    
+    // Set trending movies (excluding featured movie)
+    if (mockMovies && mockMovies.length > 0) {
+      const trending = mockMovies
+        .filter(movie => movie.id !== featuredMovie?.id)
+        .sort(() => 0.5 - Math.random())
+        .slice(0, 10);
+      setTrendingMovies(trending);
+    }
+  }, [featuredMovie]);
 
   const handleMoodSelection = (mood: string) => {
     setSelectedMood(mood === selectedMood ? null : mood);

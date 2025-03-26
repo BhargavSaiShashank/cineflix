@@ -13,8 +13,7 @@ import {
   Film, 
   Star, 
   ChevronLeft, 
-  ChevronRight,
-  Filter
+  ChevronRight
 } from 'lucide-react';
 import Image from 'next/image';
 import { mockMovies } from '@/services/mockData';
@@ -291,10 +290,10 @@ export default function CalendarPage() {
             <div className="bg-[#1e293b] rounded-xl border border-gray-800 p-6">
               <h2 className="text-2xl font-bold text-white mb-6">Your Reminders</h2>
               
-              {Object.entries(reminders).some(([_, hasReminder]) => hasReminder) ? (
+              {Object.entries(reminders).some(([, hasReminder]) => hasReminder) ? (
                 <div className="space-y-4">
                   {Object.entries(reminders)
-                    .filter(([_, hasReminder]) => hasReminder)
+                    .filter(([, hasReminder]) => hasReminder)
                     .map(([movieId]) => {
                       const movie = upcomingReleases.find(m => m.id === parseInt(movieId));
                       if (!movie) return null;
@@ -331,7 +330,7 @@ export default function CalendarPage() {
                   <Bell className="h-12 w-12 text-gray-600 mx-auto mb-4" />
                   <h3 className="text-lg font-bold text-white mb-2">No reminders set</h3>
                   <p className="text-gray-400">
-                    You haven't set any reminders for upcoming releases yet.
+                    You haven&apos;t set any reminders for upcoming releases yet.
                   </p>
                 </div>
               )}

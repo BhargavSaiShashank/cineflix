@@ -32,6 +32,7 @@ const MovieCard = ({
   const [isWatched, setIsWatched] = useState(false);
   const [userRating, setUserRating] = useState<number | null>(null);
   const [isHovered, setIsHovered] = useState(false);
+  const [imgError, setImgError] = useState(false);
 
   const toggleWatchlist = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -57,6 +58,10 @@ const MovieCard = ({
     setUserRating(userRating === value ? null : value);
   };
 
+  const handleImageError = () => {
+    setImgError(true);
+  };
+
   return (
     <motion.div
       whileHover={{ scale: 1.03 }}
@@ -69,11 +74,15 @@ const MovieCard = ({
         <Card className="overflow-hidden bg-black/20 backdrop-blur-sm border border-white/5 shadow-lg relative">
           <div className="relative aspect-[2/3] w-full">
             <Image
-              src={posterPath || '/placeholder-poster.jpg'}
+              src={imgError ? '/images/placeholder-poster.jpg' : posterPath}
               alt={title}
               fill
-              className="object-cover"
+              className="object-cover transition-opacity duration-300"
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              onError={handleImageError}
+              priority={false}
+              quality={75}
+              loading="lazy"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
             

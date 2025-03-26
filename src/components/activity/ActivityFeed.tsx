@@ -6,8 +6,6 @@ import Link from 'next/link';
 import { Star, Heart, MessageCircle, Clock, Eye, ChevronRight, Filter, MoreHorizontal } from 'lucide-react';
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Card, CardContent } from '@/components/ui/card';
-import { cn } from '@/utils/cn';
 import { Button } from '@/components/ui/button';
 
 // Mock activity data

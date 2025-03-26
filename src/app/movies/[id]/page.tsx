@@ -9,13 +9,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { 
   Play, 
   Star, 
-  Clock, 
-  Heart, 
-  Share, 
   MessageSquare, 
   Plus,
   Download,
-  Info
 } from 'lucide-react';
 import { mockMovies } from '@/services/mockData';
 import MoviePlayer from '@/components/movie/MoviePlayer';

@@ -1,6 +1,41 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="120" height="40" viewBox="0 0 120 40" fill="none">
-  <path d="M10 8L20 32H0L10 8Z" fill="#EC4899"/>
-  <path d="M30 8L40 32H20L30 8Z" fill="#EC4899" fill-opacity="0.8"/>
-  <path d="M50 8L60 32H40L50 8Z" fill="#EC4899" fill-opacity="0.6"/>
-  <text x="65" y="25" font-family="Arial" font-size="16" font-weight="bold" fill="#FFFFFF">CINEFLIX</text>
+<svg width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Outer ring with gradient -->
+  <circle cx="18" cy="18" r="18" fill="url(#paint0_radial)" />
+  
+  <!-- Inner dark circle -->
+  <circle cx="18" cy="18" r="16" fill="#0a0a0a" />
+  
+  <!-- Film perforations -->
+  <circle cx="18" cy="4.5" r="2.5" fill="#e50914" />
+  <circle cx="18" cy="31.5" r="2.5" fill="#e50914" />
+  <circle cx="4.5" cy="18" r="2.5" fill="#e50914" />
+  <circle cx="31.5" cy="18" r="2.5" fill="#e50914" />
+  <circle cx="8.5" cy="8.5" r="2" fill="#e50914" />
+  <circle cx="27.5" cy="8.5" r="2" fill="#e50914" />
+  <circle cx="8.5" cy="27.5" r="2" fill="#e50914" />
+  <circle cx="27.5" cy="27.5" r="2" fill="#e50914" />
+  
+  <!-- Center hole -->
+  <circle cx="18" cy="18" r="5" fill="url(#paint1_linear)" />
+  
+  <!-- Film strip effect -->
+  <rect x="10" y="16" width="16" height="4" rx="2" fill="white" fill-opacity="0.15" transform="rotate(45 18 18)" />
+  
+  <!-- Glow effect -->
+  <circle cx="18" cy="18" r="18" fill="url(#paint0_radial)" opacity="0.2" filter="url(#blur_filter)" />
+  
+  <defs>
+    <radialGradient id="paint0_radial" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(18 18) rotate(90) scale(18)">
+      <stop stop-color="#e50914" />
+      <stop offset="0.5" stop-color="#ff5722" />
+      <stop offset="1" stop-color="#1ed5a9" />
+    </radialGradient>
+    <linearGradient id="paint1_linear" x1="13" y1="18" x2="23" y2="18" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#e50914" />
+      <stop offset="1" stop-color="#ff5722" />
+    </linearGradient>
+    <filter id="blur_filter" x="-4" y="-4" width="44" height="44" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feGaussianBlur stdDeviation="2" />
+    </filter>
+  </defs>
 </svg> 

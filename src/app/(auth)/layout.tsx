@@ -71,7 +71,7 @@ export default function AuthLayout({
         <div className="absolute inset-0 flex flex-col items-start justify-center z-20 p-12">
           <blockquote className="max-w-lg">
             <p className="text-2xl font-medium text-white">
-              "Cinema is a matter of what's in the frame and what's out."
+              &quot;Cinema is a matter of what&apos;s in the frame and what&apos;s out.&quot;
             </p>
             <footer className="mt-4">
               <cite className="text-lg text-gray-300 not-italic">

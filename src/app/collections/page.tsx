@@ -1,11 +1,11 @@
 "use client";
 
-import React, { useState } from 'react';
+import React from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Award, Film, Star, TrendingUp, Clock, Heart } from 'lucide-react';
+import { Award, Film, Star, TrendingUp, Heart } from 'lucide-react';
 import { mockMovies } from '@/services/mockData';
 
 // Collection types
@@ -19,7 +19,6 @@ interface Collection {
 
 export default function CollectionsPage() {
   const router = useRouter();
-  const [activeTab, setActiveTab] = useState('featured');
   
   // Create collections from mock data
   const collections: Collection[] = [
@@ -58,8 +57,8 @@ export default function CollectionsPage() {
       <div className="container mx-auto px-4 py-8">
         <h1 className="text-3xl font-bold text-white mb-8">Curated Collections</h1>
         
-        <Tabs defaultValue="featured" className="w-full" onValueChange={setActiveTab}>
-          <TabsList className="grid grid-cols-4 mb-8 bg-[#1e293b]">
+        <Tabs defaultValue="featured" className="w-full">
+          <TabsList>
             <TabsTrigger value="featured" className="data-[state=active]:bg-pink-500">Featured</TabsTrigger>
             <TabsTrigger value="genres" className="data-[state=active]:bg-pink-500">Genres</TabsTrigger>
             <TabsTrigger value="moods" className="data-[state=active]:bg-pink-500">Moods</TabsTrigger>
@@ -128,7 +127,7 @@ export default function CollectionsPage() {
                   onClick={() => router.push(`/moods/${mood.toLowerCase().replace(/\s+/g, '-')}`)}
                 >
                   <h3 className="text-xl font-bold text-white mb-2">{mood}</h3>
-                  <p className="text-gray-400 mb-4">Perfect movies for when you're in the mood for {mood.toLowerCase()}</p>
+                  <p className="text-gray-400 mb-4">Perfect movies for when you&apos;re in the mood for {mood.toLowerCase()}</p>
                   
                   <div className="flex overflow-x-auto space-x-3 pb-2">
                     {mockMovies.slice(0, 3).map((movie) => (

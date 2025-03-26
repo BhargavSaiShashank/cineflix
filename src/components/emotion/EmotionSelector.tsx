@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Smile, Frown, Meh, Heart, Star, Coffee, Moon, Sun, Zap, Music, Film, Popcorn, PartyPopper } from 'lucide-react';
+import { Smile, Frown, Meh, Heart, Star, Coffee, Moon, Sun, Zap, Music, Film, PartyPopper } from 'lucide-react';
 
 import { cn } from '@/utils/cn';
 import { Button } from '@/components/ui/button';

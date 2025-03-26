@@ -2,7 +2,6 @@
 
 import React, { useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
-import { useLanguage } from '@/contexts/LanguageContext';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -12,10 +11,8 @@ import { Input } from '@/components/ui/input';
 import { Slider } from '@/components/ui/slider';
 import LanguageSelector from '@/components/settings/LanguageSelector';
 import { 
-  Globe, 
   Bell, 
   Shield, 
-  Eye, 
   Monitor, 
   Volume2, 
   User, 
@@ -26,7 +23,6 @@ import {
 
 export default function SettingsPage() {
   const { user } = useAuth();
-  const { t } = useLanguage();
   
   const [emailNotifications, setEmailNotifications] = useState(true);
   const [pushNotifications, setPushNotifications] = useState(true);
@@ -105,7 +101,7 @@ export default function SettingsPage() {
                     <Label htmlFor="username" className="text-white">Username</Label>
                     <Input 
                       id="username" 
-                      defaultValue={user.username || ""}
+                      defaultValue=""
                       className="bg-[#0f172a] border-gray-700 text-white"
                     />
                   </div>
@@ -536,7 +532,7 @@ export default function SettingsPage() {
                   <div className="space-y-0.5">
                     <Label className="text-white">Show Watching Activity</Label>
                     <p className="text-sm text-gray-400">
-                      Share what you're watching with friends
+                      Share what you&apos;re watching with friends
                     </p>
                   </div>
                   <Switch defaultChecked />

@@ -1,397 +1,297 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
 import { Slider } from '@/components/ui/slider';
 import { Badge } from '@/components/ui/badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Sparkles, Search, Brain, Film, Heart, Clock, Zap, ThumbsUp, ThumbsDown } from 'lucide-react';
+import { Switch } from '@/components/ui/switch';
+import { Label } from '@/components/ui/label';
+import { Sparkles, Filter, X } from 'lucide-react';
 import Image from 'next/image';
-import { mockMovies } from '@/services/mockData';
+import { mockMovies, mockRecommendedMovies } from '@/services/mockData';
 
-// Define movie type
-interface Movie {
-  id: number;
-  title: string;
-  overview: string;
-  posterPath: string;
-  backdropPath: string;
-  rating: number;
-  year: string;
-  genres?: string[];
-}
-
-// Moods for recommendation
-const MOODS = [
-  "Happy", "Sad", "Excited", "Relaxed", "Tense", "Romantic", "Nostalgic", "Inspired"
-];
-
-// Genres for filtering
-const GENRES = [
-  "Action", "Adventure", "Animation", "Comedy", "Crime", "Documentary", 
-  "Drama", "Fantasy", "Horror", "Mystery", "Romance", "Sci-Fi", 
-  "Thriller", "Western", "Biography", "Family", "Musical", "War"
+// Genre options
+const genres = [
+  "Action", "Adventure", "Animation", "Comedy", "Crime", 
+  "Documentary", "Drama", "Fantasy", "Horror", "Mystery",
+  "Romance", "Sci-Fi", "Thriller", "Western", "Family"
 ];
 
 export default function RecommendationEngine() {
-  const [naturalLanguageQuery, setNaturalLanguageQuery] = useState('');
-  const [selectedMood, setSelectedMood] = useState<string | null>(null);
+  // States
+  const [favoriteMovies, setFavoriteMovies] = useState<string[]>([]);
+  const [movieInput, setMovieInput] = useState('');
+  const [mood, setMood] = useState('');
+  const [preferences, setPreferences] = useState('');
+  const [lengthPreference, setLengthPreference] = useState<number[]>([120]);
   const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
-  const [recommendations, setRecommendations] = useState<Movie[]>([]);
-  const [isProcessing, setIsProcessing] = useState(false);
-  const [activeTab, setActiveTab] = useState('mood');
-  const [lengthPreference, setLengthPreference] = useState([90, 150]); // Movie length in minutes
-  const [ratingThreshold, setRatingThreshold] = useState(7.0); // Minimum rating
+  const [hidePopular, setHidePopular] = useState(false);
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [recommendations, setRecommendations] = useState<typeof mockMovies>([]);
+  const [hasGenerated, setHasGenerated] = useState(false);
 
-  // Handle mood selection
-  const handleMoodSelection = (mood: string) => {
-    setSelectedMood(mood === selectedMood ? null : mood);
-  };
-
-  // Handle genre selection
-  const handleGenreSelection = (genre: string) => {
-    setSelectedGenres(prev => 
-      prev.includes(genre) 
-        ? prev.filter(g => g !== genre) 
-        : [...prev, genre]
-    );
-  };
-
-  // Process natural language query
-  const handleNaturalLanguageSearch = () => {
-    if (!naturalLanguageQuery.trim()) return;
-    
-    setIsProcessing(true);
-    
-    // Simulate AI processing
-    setTimeout(() => {
-      // In a real app, this would call an AI service
-      // For now, we'll use mock data and simple filtering
-      const keywords = naturalLanguageQuery.toLowerCase();
-      
-      const filtered = mockMovies.filter(movie => {
-        const matchesTitle = movie.title.toLowerCase().includes(keywords);
-        const matchesOverview = movie.overview.toLowerCase().includes(keywords);
-        return matchesTitle || matchesOverview;
-      });
-      
-      setRecommendations(filtered.length > 0 ? filtered : getRandomRecommendations(3));
-      setIsProcessing(false);
-    }, 1500);
-  };
-
-  // Generate mood-based recommendations
-  const generateMoodRecommendations = () => {
-    if (!selectedMood) return;
-    
-    setIsProcessing(true);
-    
-    // Simulate AI processing
-    setTimeout(() => {
-      // In a real app, this would use a sophisticated AI model
-      // For now, we'll use mock data and randomization
-      setRecommendations(getRandomRecommendations(4));
-      setIsProcessing(false);
-    }, 1500);
-  };
-
-  // Generate personalized recommendations based on genres and preferences
-  const generatePersonalizedRecommendations = () => {
-    if (selectedGenres.length === 0) return;
-    
-    setIsProcessing(true);
-    
-    // Simulate AI processing
-    setTimeout(() => {
-      // Filter by selected genres (in a real app, this would be more sophisticated)
-      const filtered = mockMovies.filter(movie => {
-        // Check if any of the movie's genres match the selected genres
-        return movie.genres?.some(genre => selectedGenres.includes(genre)) || false;
-      });
-      
-      setRecommendations(filtered.length > 0 ? filtered.slice(0, 5) : getRandomRecommendations(5));
-      setIsProcessing(false);
-    }, 1500);
-  };
-
-  // Helper function to get random recommendations
-  const getRandomRecommendations = (count: number): Movie[] => {
-    const shuffled = [...mockMovies].sort(() => 0.5 - Math.random());
-    return shuffled.slice(0, count);
-  };
-
-  // Handle feedback on recommendations
-  const handleFeedback = (movieId: number, isPositive: boolean) => {
-    // In a real app, this would send feedback to the AI model for learning
-    console.log(`User ${isPositive ? 'liked' : 'disliked'} movie ${movieId}`);
-    
-    // For demo purposes, we'll just show a different recommendation
-    if (!isPositive) {
-      setRecommendations(prev => 
-        prev.filter(movie => movie.id !== movieId).concat(getRandomRecommendations(1))
-      );
+  // Handle adding favorite movies
+  const addFavoriteMovie = () => {
+    if (movieInput.trim() && !favoriteMovies.includes(movieInput.trim())) {
+      setFavoriteMovies([...favoriteMovies, movieInput.trim()]);
+      setMovieInput('');
     }
+  };
+
+  // Handle removing a favorite movie
+  const removeFavoriteMovie = (movie: string) => {
+    setFavoriteMovies(favoriteMovies.filter(m => m !== movie));
+  };
+
+  // Toggle genre selection
+  const toggleGenre = (genre: string) => {
+    if (selectedGenres.includes(genre)) {
+      setSelectedGenres(selectedGenres.filter(g => g !== genre));
+    } else {
+      setSelectedGenres([...selectedGenres, genre]);
+    }
+  };
+
+  // Generate recommendations
+  const generateRecommendations = () => {
+    setIsAnalyzing(true);
+    
+    // Simulate API call with a delay
+    setTimeout(() => {
+      // In a real implementation, you would call your AI service here
+      // For now, we're using mock data filtered by selected genres if any
+      let filteredRecommendations = [...mockRecommendedMovies].map(movie => ({
+        ...movie,
+        genres: 'genres' in movie ? movie.genres : []
+      }));
+      
+      // Apply filters based on user preferences
+      if (selectedGenres.length > 0) {
+        // This is a simplified mock filtering - in reality you'd use the actual genre data
+        const genreIndices = selectedGenres.map(g => genres.indexOf(g));
+        filteredRecommendations = filteredRecommendations.filter(
+          (_, index) => index % genreIndices.length === 0
+        );
+      }
+      
+      // Apply length preference filter (mock implementation)
+      if (lengthPreference[0] < 120) {
+        filteredRecommendations = filteredRecommendations.filter((_, index) => index % 2 === 0);
+      }
+      
+      // Apply hide popular filter
+      if (hidePopular) {
+        filteredRecommendations = filteredRecommendations.filter(movie => movie.rating < 8.5);
+      }
+      
+      setRecommendations(filteredRecommendations);
+      setHasGenerated(true);
+      setIsAnalyzing(false);
+    }, 2000);
   };
 
   return (
     <div className="w-full max-w-6xl mx-auto px-4 py-8">
-      <div className="mb-8 text-center">
-        <h2 className="text-3xl font-bold text-white mb-2">
-          AI-Powered Movie Recommendations
-        </h2>
-        <p className="text-gray-400 max-w-2xl mx-auto">
-          Discover your next favorite movie with our advanced AI recommendation engine. 
-          Tell us how you feel, what you like, or ask in natural language.
-        </p>
-      </div>
-      
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid grid-cols-3 mb-8">
-          <TabsTrigger value="mood" className="data-[state=active]:bg-pink-600">
-            <Brain className="mr-2 h-4 w-4" /> Mood-Based
-          </TabsTrigger>
-          <TabsTrigger value="personalized" className="data-[state=active]:bg-pink-600">
-            <Heart className="mr-2 h-4 w-4" /> Personalized
-          </TabsTrigger>
-          <TabsTrigger value="natural" className="data-[state=active]:bg-pink-600">
-            <Search className="mr-2 h-4 w-4" /> Natural Language
-          </TabsTrigger>
-        </TabsList>
+      <div className="flex flex-col gap-10">
+        {/* Header */}
+        <div className="text-center">
+          <h1 className="text-3xl font-bold mb-2">AI Movie Recommendation Engine</h1>
+          <p className="text-gray-400">Tell us what you like, and we&apos;ll find your next favorite film</p>
+        </div>
         
-        {/* Mood-based recommendations tab */}
-        <TabsContent value="mood" className="space-y-6">
-          <Card className="bg-[#1e293b] border-gray-700">
-            <CardHeader>
-              <CardTitle className="text-white">How are you feeling today?</CardTitle>
-              <CardDescription className="text-gray-400">
-                Select a mood and we'll recommend movies that match your emotional state.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
-                {MOODS.map(mood => (
-                  <Button
-                    key={mood}
-                    variant={selectedMood === mood ? "default" : "outline"}
-                    className={`h-auto py-3 ${selectedMood === mood ? 'bg-pink-600 hover:bg-pink-700' : 'border-gray-600 hover:border-pink-500'}`}
-                    onClick={() => handleMoodSelection(mood)}
-                  >
-                    {mood}
-                  </Button>
-                ))}
+        {/* Input section */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Sparkles className="h-5 w-5 text-blue-400" />
+              Your Movie Preferences
+            </CardTitle>
+            <CardDescription>
+              The more information you provide, the better recommendations you&apos;ll get
+            </CardDescription>
+          </CardHeader>
+          
+          <CardContent className="space-y-6">
+            {/* Favorite movies input */}
+            <div className="space-y-4">
+              <Label>Your favorite movies</Label>
+              <div className="flex gap-2">
+                <Input 
+                  value={movieInput}
+                  onChange={(e) => setMovieInput(e.target.value)}
+                  placeholder="Enter a movie title"
+                  onKeyDown={(e) => e.key === 'Enter' && addFavoriteMovie()}
+                  className="bg-gray-800 border-gray-700"
+                />
+                <Button 
+                  onClick={addFavoriteMovie}
+                  variant="outline"
+                >
+                  Add
+                </Button>
               </div>
-            </CardContent>
-            <CardFooter>
-              <Button 
-                className="w-full bg-gradient-to-r from-pink-500 to-purple-600 hover:opacity-90"
-                onClick={generateMoodRecommendations}
-                disabled={!selectedMood || isProcessing}
-              >
-                {isProcessing && activeTab === 'mood' ? (
-                  <>
-                    <Sparkles className="mr-2 h-4 w-4 animate-pulse" />
-                    Analyzing your mood...
-                  </>
-                ) : (
-                  <>
-                    <Sparkles className="mr-2 h-4 w-4" />
-                    Get Mood Recommendations
-                  </>
-                )}
-              </Button>
-            </CardFooter>
-          </Card>
-        </TabsContent>
-        
-        {/* Personalized recommendations tab */}
-        <TabsContent value="personalized" className="space-y-6">
-          <Card className="bg-[#1e293b] border-gray-700">
-            <CardHeader>
-              <CardTitle className="text-white">Your Personalized Experience</CardTitle>
-              <CardDescription className="text-gray-400">
-                Select your preferences and we'll curate a list just for you.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <div>
-                <h4 className="text-white mb-3">Favorite Genres</h4>
-                <div className="flex flex-wrap gap-2 mb-6">
-                  {GENRES.map(genre => (
-                    <Badge
-                      key={genre}
-                      variant={selectedGenres.includes(genre) ? "default" : "outline"}
-                      className={`cursor-pointer py-1.5 px-3 ${
-                        selectedGenres.includes(genre) 
-                          ? 'bg-pink-600 hover:bg-pink-700' 
-                          : 'bg-transparent border border-gray-600 hover:border-pink-500'
-                      }`}
-                      onClick={() => handleGenreSelection(genre)}
-                    >
-                      {genre}
+              
+              {/* Display favorite movies as badges */}
+              {favoriteMovies.length > 0 && (
+                <div className="flex flex-wrap gap-2 mt-3">
+                  {favoriteMovies.map((movie, index) => (
+                    <Badge key={index} className="pl-3 pr-2 py-1.5 gap-1 bg-gray-700 hover:bg-gray-600">
+                      {movie}
+                      <button 
+                        onClick={() => removeFavoriteMovie(movie)}
+                        className="ml-1 rounded-full hover:bg-gray-500 p-0.5"
+                      >
+                        <X className="h-3 w-3" />
+                      </button>
                     </Badge>
                   ))}
                 </div>
+              )}
+            </div>
+            
+            {/* Mood input */}
+            <div className="space-y-2">
+              <Label>Your current mood</Label>
+              <Input 
+                value={mood}
+                onChange={(e) => setMood(e.target.value)}
+                placeholder="e.g., Relaxed, Excited, Thoughtful"
+                className="bg-gray-800 border-gray-700"
+              />
+            </div>
+            
+            {/* Additional preferences */}
+            <div className="space-y-2">
+              <Label>Additional preferences (optional)</Label>
+              <Textarea 
+                value={preferences}
+                onChange={(e) => setPreferences(e.target.value)}
+                placeholder="Tell us what themes, styles, or elements you enjoy in movies..."
+                className="bg-gray-800 border-gray-700 min-h-[100px]"
+              />
+            </div>
+            
+            {/* Genre selection */}
+            <div className="space-y-3">
+              <Label>Genres</Label>
+              <div className="flex flex-wrap gap-2">
+                {genres.map((genre) => (
+                  <Badge 
+                    key={genre}
+                    onClick={() => toggleGenre(genre)}
+                    className={`cursor-pointer py-1.5 px-3 ${
+                      selectedGenres.includes(genre) 
+                        ? 'bg-blue-600 hover:bg-blue-700' 
+                        : 'bg-gray-700 hover:bg-gray-600'
+                    }`}
+                  >
+                    {genre}
+                  </Badge>
+                ))}
               </div>
-              
-              <div>
-                <h4 className="text-white mb-3">Movie Length (minutes)</h4>
-                <Slider
-                  defaultValue={lengthPreference}
-                  min={60}
-                  max={240}
-                  step={10}
-                  onValueChange={setLengthPreference}
-                  className="mb-2"
-                />
-                <div className="flex justify-between text-gray-400 text-sm">
-                  <span>{lengthPreference[0]} min</span>
-                  <span>{lengthPreference[1]} min</span>
-                </div>
+            </div>
+            
+            {/* Length preference */}
+            <div className="space-y-3">
+              <div className="flex justify-between items-center">
+                <Label>Preferred Length (minutes)</Label>
+                <span className="text-sm text-gray-400">{lengthPreference[0]}</span>
               </div>
-              
-              <div>
-                <h4 className="text-white mb-3">Minimum Rating</h4>
-                <Slider
-                  defaultValue={[ratingThreshold]}
-                  min={1}
-                  max={10}
-                  step={0.1}
-                  onValueChange={(value) => setRatingThreshold(value[0])}
-                  className="mb-2"
-                />
-                <div className="flex justify-between text-gray-400 text-sm">
-                  <span>Rating: {ratingThreshold.toFixed(1)}/10</span>
-                </div>
+              <Slider 
+                value={lengthPreference}
+                onValueChange={setLengthPreference}
+                min={60}
+                max={240}
+                step={10}
+                className="py-4"
+              />
+              <div className="flex justify-between text-xs text-gray-500">
+                <span>1 hour</span>
+                <span>4 hours</span>
               </div>
-            </CardContent>
-            <CardFooter>
-              <Button 
-                className="w-full bg-gradient-to-r from-pink-500 to-purple-600 hover:opacity-90"
-                onClick={generatePersonalizedRecommendations}
-                disabled={selectedGenres.length === 0 || isProcessing}
-              >
-                {isProcessing && activeTab === 'personalized' ? (
-                  <>
-                    <Sparkles className="mr-2 h-4 w-4 animate-pulse" />
-                    Generating recommendations...
-                  </>
-                ) : (
-                  <>
-                    <Sparkles className="mr-2 h-4 w-4" />
-                    Get Personalized Recommendations
-                  </>
-                )}
-              </Button>
-            </CardFooter>
-          </Card>
-        </TabsContent>
-        
-        {/* Natural language search tab */}
-        <TabsContent value="natural" className="space-y-6">
-          <Card className="bg-[#1e293b] border-gray-700">
-            <CardHeader>
-              <CardTitle className="text-white">Ask in Natural Language</CardTitle>
-              <CardDescription className="text-gray-400">
-                Describe what you're looking for in your own words.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="flex flex-col space-y-4">
-                <div className="relative">
-                  <Input
-                    placeholder="E.g., 'Show me sci-fi movies with plot twists' or 'Something like Inception but more romantic'"
-                    value={naturalLanguageQuery}
-                    onChange={(e) => setNaturalLanguageQuery(e.target.value)}
-                    className="bg-[#0f172a] border-gray-700 text-white pl-10 py-6"
-                  />
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
-                </div>
-                <div className="text-gray-400 text-sm">
-                  <p>Try these examples:</p>
-                  <ul className="list-disc pl-5 mt-1 space-y-1">
-                    <li>Movies with unexpected endings released after 2010</li>
-                    <li>Feel-good comedies for a rainy day</li>
-                    <li>Intense thrillers similar to Se7en</li>
-                  </ul>
-                </div>
-              </div>
-            </CardContent>
-            <CardFooter>
-              <Button 
-                className="w-full bg-gradient-to-r from-pink-500 to-purple-600 hover:opacity-90"
-                onClick={handleNaturalLanguageSearch}
-                disabled={!naturalLanguageQuery.trim() || isProcessing}
-              >
-                {isProcessing && activeTab === 'natural' ? (
-                  <>
-                    <Brain className="mr-2 h-4 w-4 animate-pulse" />
-                    Processing your request...
-                  </>
-                ) : (
-                  <>
-                    <Brain className="mr-2 h-4 w-4" />
-                    Search with AI
-                  </>
-                )}
-              </Button>
-            </CardFooter>
-          </Card>
-        </TabsContent>
-      </Tabs>
-      
-      {/* Recommendations display */}
-      {recommendations.length > 0 && (
-        <div className="mt-12">
-          <h3 className="text-2xl font-bold text-white mb-6 flex items-center">
-            <Sparkles className="mr-2 h-5 w-5 text-pink-500" />
-            AI-Powered Recommendations
-          </h3>
+            </div>
+            
+            {/* Hide popular toggle */}
+            <div className="flex items-center justify-between space-x-2">
+              <Label htmlFor="hide-popular" className="flex items-center gap-2 cursor-pointer">
+                <Filter className="h-4 w-4 text-gray-400" />
+                Hide mainstream popular movies
+              </Label>
+              <Switch 
+                id="hide-popular" 
+                checked={hidePopular}
+                onCheckedChange={setHidePopular}
+              />
+            </div>
+          </CardContent>
           
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-6">
-            {recommendations.map(movie => (
-              <div key={movie.id} className="bg-[#1e293b] rounded-lg overflow-hidden border border-gray-800 transition-all hover:border-pink-500">
-                <div className="relative aspect-[2/3]">
-                  <Image
-                    src={movie.posterPath}
-                    alt={movie.title}
-                    fill
-                    className="object-cover"
-                  />
-                  <div className="absolute top-2 right-2 bg-pink-600 text-white text-xs font-bold px-2 py-1 rounded">
-                    {movie.rating.toFixed(1)}
+          <CardFooter>
+            <Button 
+              onClick={generateRecommendations}
+              className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700"
+              size="lg"
+              disabled={isAnalyzing}
+            >
+              {isAnalyzing ? (
+                <>
+                  <span className="animate-pulse">Analyzing your preferences...</span>
+                </>
+              ) : (
+                <>
+                  <Sparkles className="mr-2 h-4 w-4" />
+                  Generate Recommendations
+                </>
+              )}
+            </Button>
+          </CardFooter>
+        </Card>
+        
+        {/* Results section */}
+        {hasGenerated && !isAnalyzing && (
+          <div className="space-y-6">
+            <h2 className="text-2xl font-bold">Your Personalized Recommendations</h2>
+            
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+              {recommendations.map((movie) => (
+                <Card key={movie.id} className="overflow-hidden bg-gray-800 border-gray-700">
+                  <div className="relative h-[300px]">
+                    <Image 
+                      src={movie.posterPath}
+                      alt={movie.title}
+                      fill
+                      className="object-cover"
+                    />
                   </div>
-                </div>
-                <div className="p-4">
-                  <h4 className="text-white font-bold truncate">{movie.title}</h4>
-                  <p className="text-gray-400 text-sm">{movie.year}</p>
-                  <p className="text-gray-400 text-sm mt-2 line-clamp-2">{movie.overview}</p>
-                  
-                  <div className="flex justify-between mt-4">
-                    <Button 
-                      variant="ghost" 
-                      size="sm" 
-                      className="text-green-500 hover:text-green-400 p-0"
-                      onClick={() => handleFeedback(movie.id, true)}
-                    >
-                      <ThumbsUp className="h-5 w-5" />
-                    </Button>
-                    <Button 
-                      variant="ghost" 
-                      size="sm" 
-                      className="text-red-500 hover:text-red-400 p-0"
-                      onClick={() => handleFeedback(movie.id, false)}
-                    >
-                      <ThumbsDown className="h-5 w-5" />
-                    </Button>
-                  </div>
-                </div>
-              </div>
-            ))}
+                  <CardContent className="p-4">
+                    <h3 className="font-semibold text-lg mb-1">{movie.title}</h3>
+                    <p className="text-sm text-gray-400 mb-2">{movie.year}</p>
+                    <div className="flex items-center text-sm mb-3">
+                      <span className="text-yellow-400">★</span>
+                      <span className="ml-1">{movie.rating.toFixed(1)}</span>
+                    </div>
+                    <p className="text-sm text-gray-300 line-clamp-3">
+                      {movie.overview}
+                    </p>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+            
+            <div className="text-center mt-6">
+              <Button 
+                onClick={generateRecommendations} 
+                variant="outline"
+                className="px-8"
+              >
+                Refine Recommendations
+              </Button>
+            </div>
           </div>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
-} 
+}
