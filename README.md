@@ -2,7 +2,6 @@
 
 CineFlix is a cross-platform AI movie recommendation application with an Instagram-inspired UI and Letterboxd-like features. Users can explore, review, and track movies based on their mood, preferences, and trending selections.
 
-![CineFlix Screenshot](https://via.placeholder.com/800x400?text=CineFlix+Screenshot)
 
 ## 🚀 Features
 
