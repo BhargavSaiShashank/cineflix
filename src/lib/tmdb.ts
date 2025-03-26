@@ -77,27 +77,51 @@ export type MovieDetails = MovieResult & {
   tagline: string | null;
 };
 
+export type VideoResult = {
+  id: string;
+  iso_639_1: string;
+  iso_3166_1: string;
+  key: string;
+  name: string;
+  official: boolean;
+  published_at: string;
+  site: string;
+  size: number;
+  type: string;
+};
+
+export type VideoResponse = {
+  id: number;
+  results: VideoResult[];
+};
+
 class TMDBClient {
   private headers: HeadersInit;
   private baseUrl: string;
+  private imageBaseUrl: string;
 
   constructor() {
     this.baseUrl = TMDB_API_URL;
+    this.imageBaseUrl = TMDB_IMAGE_BASE_URL;
     this.headers = {
-      'Authorization': `Bearer ${env.TMDB_ACCESS_TOKEN}`,
       'Content-Type': 'application/json',
     };
   }
 
   private async fetchFromTMDB<T>(endpoint: string, params: Record<string, string> = {}): Promise<T> {
-    const queryParams = new URLSearchParams(params);
-    const url = `${this.baseUrl}${endpoint}${params ? '?' + queryParams : ''}`;
+    const queryParams = new URLSearchParams({
+      ...params,
+      api_key: env.TMDB_API_KEY,
+      language: 'en-US',
+    });
+    const url = `${this.baseUrl}${endpoint}?${queryParams}`;
 
     try {
       const response = await fetch(url, {
         headers: this.headers,
         next: {
-          revalidate: 3600 // Cache for 1 hour
+          revalidate: 3600, // Cache for 1 hour
+          tags: ['tmdb-api']
         }
       });
 
@@ -105,7 +129,8 @@ class TMDBClient {
         throw new Error(`TMDB API error: ${response.status} ${response.statusText}`);
       }
 
-      return response.json();
+      const data = await response.json();
+      return data;
     } catch (error) {
       console.error('TMDB API request failed:', error);
       throw error;
@@ -127,7 +152,10 @@ class TMDBClient {
     const finalSize = validSize ? size : 'original';
 
     try {
-      return `${TMDB_IMAGE_BASE_URL}/${finalSize}${cleanPath}`;
+      // Construct and validate the URL
+      const imageUrl = `${this.imageBaseUrl}/${finalSize}${cleanPath}`;
+      const url = new URL(imageUrl);
+      return url.toString();
     } catch (error) {
       console.error('Error constructing image URL:', error);
       return '/images/placeholder-poster.jpg';
@@ -182,6 +210,19 @@ class TMDBClient {
       language: 'en-US',
       include_adult: 'false',
     });
+  }
+
+  public async getMovieVideos(movieId: number): Promise<VideoResponse> {
+    return this.fetchFromTMDB(`/movie/${movieId}/videos`);
+  }
+
+  public getVideoUrl(key: string, site: string = 'YouTube'): string {
+    if (site === 'YouTube') {
+      return `https://www.youtube.com/embed/${key}`;
+    } else if (site === 'Vimeo') {
+      return `https://player.vimeo.com/video/${key}`;
+    }
+    return '';
   }
 }
 

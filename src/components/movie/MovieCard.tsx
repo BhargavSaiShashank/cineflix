@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
@@ -9,6 +9,9 @@ import { Heart, Eye, Star, Plus, Check } from 'lucide-react';
 
 import { Card, CardContent } from '@/components/ui/card';
 import { cn } from '@/utils/cn';
+import { tmdb } from '@/lib/tmdb';
+import type { VideoResult } from '@/lib/tmdb';
+import VideoPlayer from './VideoPlayer';
 
 interface MovieCardProps {
   id: number;
@@ -33,6 +36,43 @@ const MovieCard = ({
   const [userRating, setUserRating] = useState<number | null>(null);
   const [isHovered, setIsHovered] = useState(false);
   const [imgError, setImgError] = useState(false);
+  const [isLoadingTrailer, setIsLoadingTrailer] = useState(true);
+  const [trailer, setTrailer] = useState<VideoResult | null>(null);
+
+  useEffect(() => {
+    const fetchTrailer = async () => {
+      try {
+        setIsLoadingTrailer(true);
+        const videos = await tmdb.getMovieVideos(id);
+        const officialTrailer = videos.results.find(
+          video => 
+            video.type.toLowerCase() === 'trailer' && 
+            video.site === 'YouTube' &&
+            video.official
+        );
+        
+        const anyTrailer = videos.results.find(
+          video => 
+            video.type.toLowerCase() === 'trailer' && 
+            video.site === 'YouTube'
+        );
+
+        if (officialTrailer) {
+          setTrailer(officialTrailer);
+        } else if (anyTrailer) {
+          setTrailer(anyTrailer);
+        }
+      } catch (error) {
+        console.error('Error fetching trailer:', error);
+      } finally {
+        setIsLoadingTrailer(false);
+      }
+    };
+
+    if (id) {
+      fetchTrailer();
+    }
+  }, [id]);
 
   const toggleWatchlist = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -62,6 +102,8 @@ const MovieCard = ({
     setImgError(true);
   };
 
+  const imageUrl = tmdb.getImageUrl(posterPath, 'w500');
+
   return (
     <motion.div
       whileHover={{ scale: 1.03 }}
@@ -74,7 +116,7 @@ const MovieCard = ({
         <Card className="overflow-hidden bg-black/20 backdrop-blur-sm border border-white/5 shadow-lg relative">
           <div className="relative aspect-[2/3] w-full">
             <Image
-              src={imgError ? '/images/placeholder-poster.jpg' : posterPath}
+              src={imgError ? '/images/placeholder-poster.jpg' : imageUrl}
               alt={title}
               fill
               className="object-cover transition-opacity duration-300"
@@ -106,6 +148,13 @@ const MovieCard = ({
               transition={{ duration: 0.2 }}
             >
               <div className="flex flex-col items-center space-y-4">
+                {/* Trailer button - Moved to top */}
+                {!isLoadingTrailer && trailer && (
+                  <div className="mb-4">
+                    <VideoPlayer video={trailer} poster={imageUrl} />
+                  </div>
+                )}
+
                 {/* Star rating system */}
                 <div className="flex space-x-1">
                   {[1, 2, 3, 4, 5].map((value) => (

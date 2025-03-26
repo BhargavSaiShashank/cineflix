@@ -122,7 +122,7 @@ export default function SignInPage() {
           type="submit" 
           className="w-full" 
           disabled={isLoading}
-          variant="gradient"
+          variant="default"
         >
           {isLoading ? (
             <>

@@ -131,7 +131,7 @@ function generateFallbackResponse(message: string): string {
   if (lowercaseMessage.includes('analyze the movie') || lowercaseMessage.includes('analysis')) {
     // Extract movie title - look for text in quotes
     const titleMatch = message.match(/"([^"]+)"/);
-    let movieTitle = titleMatch ? titleMatch[1] : "the movie";
+    const movieTitle = titleMatch ? titleMatch[1] : "the movie";
     
     // Extract overview if available
     let overview = "";
